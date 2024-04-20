@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import random
 """
 Tenho que pegar as bases de reports e imagens localizados na pasta mimic-cxr, rodar o labelizer no report, especificamente nas abas de Impression e Findings
 em seguida, devo tratar os textos, separar em partes especificas, remover o que necessário e salvar os textos com mais de 3 palavras. Em seguida, também salvar
@@ -9,7 +10,9 @@ INPUT_IMAGES_PATH = 'mimic-cxr/mimic-cxr-images'
 INPUT_REPORTS_PATH = 'mimic-cxr/mimic-cxr-reports'
 
 OUTPUT_REPORT_FILE = "reports.csv"
-OUTPUT_FILE = 'mimic-cxr-train-meta.csv'
+OUTPUT_TRAIN_FILE = 'mimic-cxr-train-meta.csv'
+OUTPUT_VALIDATION_FILE1 = 'chexpert-5x200-val-meta.csv'
+OUTPUT_VALIDATION_FILE2 = 'sentence-label.csv'
 
 remove_list_temp = ['p10013569']
 
@@ -60,7 +63,20 @@ def labeler(treated_report_list):
 def treat_labeler(df, related_image_list):
     df.fillna(0, inplace=True)
     df.insert(0, 'imgpath', related_image_list)
-    df.to_csv(OUTPUT_FILE, index=True, header=True, sep=',')
+
+def create_train_and_validation_files(df):
+    num_sample = int(0.1 * len(df))
+    indexes_sample = random.sample(range(len(df)), num_sample)
+
+    df_validation = df.iloc[indexes_sample]
+    df = df.drop(df.index[indexes_sample])
+
+    df_chexpert_5x200_val_meta = df_validation.drop(columns=['report'])
+    df_setence_label = df_validation.drop(columns=['imgpath'])
+
+    df_chexpert_5x200_val_meta.to_csv(OUTPUT_VALIDATION_FILE1, index=True, header=True, sep=',')
+    df_setence_label.to_csv(OUTPUT_VALIDATION_FILE2, index=True, header=True, sep=',')
+    df.to_csv(OUTPUT_TRAIN_FILE, index=True, header=True, sep=',')
 
 def main():
     treated_report_list = []
@@ -80,6 +96,7 @@ def main():
                     
     df = labeler(treated_report_list)
     treat_labeler(df, related_image_list)
+    create_train_and_validation_files(df)
 
 if __name__ == '__main__':
     main()
