@@ -1,0 +1,17 @@
+,imgpath,Sex,Age,Frontal/Lateral,AP/PA,No Finding,Enlarged Cardiomediastinum,Cardiomegaly,Lung Lesion,Lung Opacity,Edema,Consolidation,Pneumonia,Atelectasis,Pneumothorax,Pleural Effusion,Pleural Other,Fracture,Support Devices, subject_id
+2973,mimic-cxr/mimic-cxr-images/p10001401/s58747570/f56a3d51-284b2466-262661f1-2567a6ab-248f4ae3.jpg,Female,27,Lateral,0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,patient52284-study5
+2974,mimic-cxr/mimic-cxr-images/p10001401/s58747570/19e55bee-714bb193-0968d683-5bf655a5-7b5caba9.jpg,Female,27,Lateral,0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,patient52284-study5
+2975,mimic-cxr/mimic-cxr-images/p10001401/s58747570/f56a3d51-284b2466-262661f1-2567a6ab-248f4ae3.jpg,Female,27,Lateral,0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,patient52284-study5
+2976,mimic-cxr/mimic-cxr-images/p10001401/s58747570/19e55bee-714bb193-0968d683-5bf655a5-7b5caba9.jpg,Female,27,Lateral,0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,1.0,0.0,0.0,0.0,0.0,0.0,patient52284-study5
+2977,mimic-cxr/mimic-cxr-images/p10001401/s58747570/f56a3d51-284b2466-262661f1-2567a6ab-248f4ae3.jpg,Female,27,Lateral,0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,patient52284-study5
+2978,mimic-cxr/mimic-cxr-images/p10001401/s58747570/19e55bee-714bb193-0968d683-5bf655a5-7b5caba9.jpg,Female,27,Lateral,0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,patient52284-study5
+2979,mimic-cxr/mimic-cxr-images/p10001401/s58747570/f56a3d51-284b2466-262661f1-2567a6ab-248f4ae3.jpg,Female,27,Lateral,0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,patient52284-study5
+2980,mimic-cxr/mimic-cxr-images/p10001401/s58747570/19e55bee-714bb193-0968d683-5bf655a5-7b5caba9.jpg,Female,27,Lateral,0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,patient52284-study5
+2981,mimic-cxr/mimic-cxr-images/p10001401/s58747570/f56a3d51-284b2466-262661f1-2567a6ab-248f4ae3.jpg,Female,27,Lateral,0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,patient52284-study5
+2982,mimic-cxr/mimic-cxr-images/p10001401/s58747570/19e55bee-714bb193-0968d683-5bf655a5-7b5caba9.jpg,Female,27,Lateral,0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,patient52284-study5
+2983,mimic-cxr/mimic-cxr-images/p10001401/s58747570/f56a3d51-284b2466-262661f1-2567a6ab-248f4ae3.jpg,Female,27,Lateral,0,0.0,-1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,patient52284-study5
+2984,mimic-cxr/mimic-cxr-images/p10001401/s58747570/19e55bee-714bb193-0968d683-5bf655a5-7b5caba9.jpg,Female,27,Lateral,0,0.0,-1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,patient52284-study5
+2985,mimic-cxr/mimic-cxr-images/p10001401/s58747570/f56a3d51-284b2466-262661f1-2567a6ab-248f4ae3.jpg,Female,27,Lateral,0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,patient52284-study5
+2986,mimic-cxr/mimic-cxr-images/p10001401/s58747570/19e55bee-714bb193-0968d683-5bf655a5-7b5caba9.jpg,Female,27,Lateral,0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,patient52284-study5
+2987,mimic-cxr/mimic-cxr-images/p10001401/s58747570/f56a3d51-284b2466-262661f1-2567a6ab-248f4ae3.jpg,Female,27,Lateral,0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,patient52284-study5
+2988,mimic-cxr/mimic-cxr-images/p10001401/s58747570/19e55bee-714bb193-0968d683-5bf655a5-7b5caba9.jpg,Female,27,Lateral,0,1.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,patient52284-study5
