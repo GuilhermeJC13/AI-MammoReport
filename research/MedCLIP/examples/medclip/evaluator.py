@@ -7,10 +7,18 @@ import torch
 from sklearn.preprocessing import OrdinalEncoder
 from sklearn.metrics import roc_auc_score, average_precision_score
 from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.metrics import f1_score
+
+from medclip.losses import ImageSuperviseLoss
+
+from collections import defaultdict
 
 from tqdm import tqdm
 
 from . import constants
+
+loss_values = []
+global_steps_loss = []
 
 class Evaluator:
     '''do evaluation on chexpert5x200 zero-shot classification
@@ -29,7 +37,8 @@ class Evaluator:
         self.mode = mode
         self.eval_dataloader = eval_dataloader
     
-    def evaluate(self, eval_dataloader=None):
+    def evaluate(self, model, global_step, eval_dataloader=None):
+
         self.clf.eval()
         if self.eval_dataloader is None and eval_dataloader is not None: self.eval_dataloader = eval_dataloader
         else: eval_dataloader = self.eval_dataloader
@@ -39,6 +48,7 @@ class Evaluator:
             with torch.no_grad():
                 outputs = self.clf(**data)
                 pred = outputs['logits']
+      
             pred_list.append(pred)
             label_list.append(data['labels'])
         
@@ -47,6 +57,7 @@ class Evaluator:
 
         pred = pred_list.cpu().detach().numpy()        
         outputs = {'pred':pred, 'labels':labels}
+
 
         if self.mode is None:
             if len(labels.shape) == 1:
@@ -65,15 +76,25 @@ class Evaluator:
                 outputs['auc'] = auc
                 pred_label = np.ones(len(pred))
                 pred_label[pred_score<0.5] = 0
+
                 acc = (pred_label == labels).mean()
+                print(f"Acuracy: {acc}")
                 outputs['acc'] = acc
+
+                f1 = f1_score(labels, pred_label)
+                outputs['f1'] = f1
                 
 
             else: # have 2 outputs
                 pred_score = torch.tensor(pred).sigmoid().numpy()
                 pred_label = np.argmax(pred_score, 1)
+
                 acc = (pred_label == labels).mean()
+                print(f"Acuracy: {acc}")
                 outputs['acc'] = acc
+
+                f1 = f1_score(labels, pred_label)
+                outputs['f1'] = f1
 
                 # cnf_matrix = confusion_matrix(labels, pred_label)
                 # res = self.process_confusion_matrix(cnf_matrix)
@@ -85,17 +106,45 @@ class Evaluator:
             outputs.update(res)
 
         if self.mode == 'multiclass':
+            def save_loss_plot():
+                import matplotlib.pyplot as plt
+
+                plt.plot(global_steps_loss, loss_values, 'b')
+                plt.title('Evaluation Loss')
+                plt.xlabel('Training steps')
+                plt.ylabel('Loss')
+                plt.legend()
+
+                # Save the plot as an image file (e.g., PNG, PDF, etc.)
+                plt.savefig('evaluation_loss_plot.png')  # Specify the filename and format here
+                plt.clf()
+
+            def categorical_cross_entropy_loss(y_true, y_pred):
+                epsilon = 1e-15  # Adicionando um valor pequeno para evitar problemas de log(0)
+                y_pred = np.clip(y_pred, epsilon, 1 - epsilon)  # Clip para evitar valores de probabilidade 0 ou 1
+                return -np.mean(y_true * np.log(y_pred))
+            
             pred_label = pred.argmax(1)
+
+            loss = categorical_cross_entropy_loss(labels, pred_label)
+            loss_values.append(loss)
+            global_steps_loss.append(global_step)
+            save_loss_plot()
+
             acc = (pred_label == labels).mean()
+            print(f"Acuracy: {acc}")
             outputs['acc'] = acc
+
+            f1 = f1_score(labels, pred_label, average='macro')
+            outputs['f1'] = f1 # Changing acc to f1
             res = classification_report(labels, pred_label, output_dict=True)
             res = res['macro avg']
             res.pop('support')
             outputs.update(res)
 
-            # cnf_matrix = confusion_matrix(labels, pred_label)
-            # res = self.process_confusion_matrix(cnf_matrix)
-            # outputs.update(res)
+            #cnf_matrix = confusion_matrix(labels, pred_label)
+            #res = self.process_confusion_matrix(cnf_matrix)
+            #outputs.update(res)
         
         if self.mode == 'multilabel':
             pred_score = torch.tensor(pred).sigmoid().numpy()

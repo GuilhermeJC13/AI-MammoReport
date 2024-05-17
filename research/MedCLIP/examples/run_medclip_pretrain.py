@@ -21,6 +21,7 @@ random.seed(seed)
 np.random.seed(seed)
 torch.manual_seed(seed)
 torch.cuda.manual_seed(seed)
+torch.multiprocessing.set_sharing_strategy('file_system')
 os.environ['PYTHONASHSEED'] = str(seed)
 os.environ['TOKENIZERS_PARALLELISM']='false'
 
@@ -30,12 +31,12 @@ device = "cuda:0" if torch.cuda.is_available() else "cpu"
 
 # set training configurations
 train_config = {
-    'batch_size': 50,#100,
-    'num_epochs': 20,
+    'batch_size': 25,
+    'num_epochs': 10,
     'warmup': 0.1, # the first 10% of training steps are used for warm-up
     'lr': 2e-5,
     'weight_decay': 1e-4,
-    'eval_batch_size': 10,
+    'eval_batch_size': 5,
     'eval_steps': 1000,#1000,
     'save_steps': 1000#1000,
 }
@@ -50,11 +51,13 @@ datalist = [
 transform = transforms.Compose([
                 transforms.RandomHorizontalFlip(0.5),
                 transforms.ColorJitter(0.2,0.2),
+                #transforms.GaussianBlur(3, (0.1, 1)),
                 transforms.RandomAffine(degrees=10, scale=(0.8,1.1), translate=(0.0625,0.0625)),
                 transforms.Resize((256, 256)),
                 transforms.RandomCrop((constants.IMG_SIZE, constants.IMG_SIZE)),
                 transforms.ToTensor(),
-                transforms.Normalize(mean=[constants.IMG_MEAN],std=[constants.IMG_STD])],
+                transforms.Normalize(mean=[constants.IMG_MEAN],std=[constants.IMG_STD])
+                ],
             )
 
 traindata = ImageTextContrastiveDataset(datalist=datalist, imgtransform=transform)
@@ -63,8 +66,8 @@ trainloader = DataLoader(traindata,
     batch_size=train_config['batch_size'],
     collate_fn=train_collate_fn,
     shuffle=True,
-    pin_memory=True,
-    num_workers=12,
+    pin_memory=True,# Test
+    num_workers=12, # 12
     )
 
 # build medclip model
@@ -74,15 +77,15 @@ model.cuda()
 # build evaluator
 cls_prompts = generate_chexpert_class_prompts(n=10)
 val_data = ZeroShotImageDataset(['chexpert-5x200-val'],
-    class_names=constants.CHEXPERT_COMPETITION_TASKS)
+    class_names=constants.CHEXPERT_COMPETITION_TASKS, imgtransform=transform)
 val_collate_fn = ZeroShotImageCollator(cls_prompts=cls_prompts,
     mode='multiclass')
 eval_dataloader = DataLoader(val_data,
     batch_size=train_config['eval_batch_size'],
     collate_fn=val_collate_fn,
     shuffle=False,
-    pin_memory=True,
-    num_workers=4,
+    pin_memory=True,# Test
+    num_workers=12,
     )
 medclip_clf = PromptClassifier(model)
 evaluator = Evaluator(

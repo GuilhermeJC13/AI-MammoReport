@@ -15,6 +15,12 @@ from torch.optim import Optimizer
 from torch import distributed as dist
 import transformers
 
+global_steps = []
+loss_values = []
+
+f1_values = []
+acc_values = []
+
 WEIGHTS_NAME = "pytorch_model.bin"
 
 class Trainer:
@@ -155,10 +161,26 @@ class Trainer:
                 global_step += 1
 
                 if evaluation_steps>0 and global_step % evaluation_steps == 0:
+                    def save_loss_plot():
+                        import matplotlib.pyplot as plt
+
+                        plt.plot(global_steps, loss_values, 'b')
+                        plt.title('Training Loss')
+                        plt.xlabel('Training steps')
+                        plt.ylabel('Loss')
+                        plt.legend()
+
+                        # Save the plot as an image file (e.g., PNG, PDF, etc.)
+                        plt.savefig('training_loss_plot.png')  # Specify the filename and format here
+                        plt.clf()
+
                     print('\n######### Train Loss #########')
                     for key in train_loss_dict.keys():
                         print('{} {:.4f} \n'.format(key, np.mean(train_loss_dict[key])))
+                        global_steps.append(global_step) # test
+                        loss_values.append(np.mean(train_loss_dict[key])) # test
                     train_loss_dict = defaultdict(list)
+                    save_loss_plot()
 
                     #TODO: update prompt sentences
                     # for train_idx in range(num_train_objectives):
@@ -166,18 +188,65 @@ class Trainer:
                     #         dataloaders[train_idx].dataset._build_prompt_sentence()
 
                 if evaluation_steps > 0 and global_step % evaluation_steps == 0 and self.evaluator is not None:
-                    scores = self.evaluator.evaluate()
+                    def save_f1_plot():
+                        import matplotlib.pyplot as plt
+
+                        plt.plot(global_steps, f1_values, 'b')
+                        plt.title('F1 Score')
+                        plt.xlabel('Training steps')
+                        plt.ylabel('F1')
+                        plt.legend()
+
+                        # Save the plot as an image file (e.g., PNG, PDF, etc.)
+                        plt.savefig('f1_plot.png')  # Specify the filename and format here
+                        plt.clf()
+                    
+                    def save_auroc_plot():
+                        import matplotlib.pyplot as plt
+
+                        plt.plot(global_steps, auc_values, 'b')
+                        plt.title('AUROC Score')
+                        plt.xlabel('Training steps')
+                        plt.ylabel('AUROC')
+                        plt.legend()
+
+                        # Save the plot as an image file (e.g., PNG, PDF, etc.)
+                        plt.savefig('auroc_plot.png')  # Specify the filename and format here
+                        plt.clf()
+
+                    def save_acc_plot():
+                        import matplotlib.pyplot as plt
+
+                        plt.plot(global_steps, acc_values, 'b')
+                        plt.title('Acuracy')
+                        plt.xlabel('Training steps')
+                        plt.ylabel('Acc')
+                        plt.legend()
+
+                        # Save the plot as an image file (e.g., PNG, PDF, etc.)
+                        plt.savefig('acc_plot.png')  # Specify the filename and format here
+                        plt.clf()
+
+                    scores = self.evaluator.evaluate(model, global_step)
                     print(f'\n######### Eval {global_step} #########')
                     for key in scores.keys():
-                        if key in ['acc','auc']:
+                        if key in ['f1','auc', 'acc']:
                             print('{}: {:.4f}'.format(key, scores[key]))
+                            if key == 'f1':
+                                f1_values.append(scores['f1'])
+                            #auc_values.append(scores['auc'])
+                            if key == 'acc':
+                                acc_values.append(scores['acc'])
+                    save_f1_plot()
+                    #save_auroc_plot()
+                    save_acc_plot()
                     save_dir =  os.path.join(output_path, f'{global_step}/')
                     self._save_ckpt(model, save_dir)
 
                     # score logs save the list of scores
                     self.score_logs['global_step'].append(global_step)
                     for key in scores.keys():
-                        if key in ['acc','auc']:
+                        if key in ['f1','auc']:
                             self.score_logs[key].append(scores[key])
 
                 if self.evaluator is None and global_step % save_steps == 0:
