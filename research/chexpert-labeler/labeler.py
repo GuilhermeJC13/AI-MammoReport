@@ -15,7 +15,7 @@ OUTPUT_TRAIN_FILE = 'mimic-cxr-train-meta.csv'
 OUTPUT_VALIDATION_FILE1 = 'chexpert-5x200-val-meta.csv'
 OUTPUT_VALIDATION_FILE2 = 'sentence-label.csv'
 
-valid_patient_batch = ['p10']
+valid_patient_batch = ['p10', 'p11', 'p12', 'p13', 'p14', 'p15', 'p16', 'p17', 'p18', 'p19']
 remove_list_temp = ['p10013569']
 num_groups = 10
 num_labels = 14

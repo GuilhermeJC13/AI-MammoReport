@@ -49,9 +49,9 @@ datalist = [
 ]
 
 transform = transforms.Compose([
-                transforms.RandomHorizontalFlip(0.5),
+                transforms.RandomHorizontalFlip(0.25),
                 transforms.ColorJitter(0.2,0.2),
-                #transforms.GaussianBlur(3, (0.1, 1)),
+                transforms.GaussianBlur(3, (0.1, 1)),
                 transforms.RandomAffine(degrees=10, scale=(0.8,1.1), translate=(0.0625,0.0625)),
                 transforms.Resize((256, 256)),
                 transforms.RandomCrop((constants.IMG_SIZE, constants.IMG_SIZE)),
